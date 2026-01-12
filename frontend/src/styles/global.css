@@ -1,0 +1,485 @@
+
+
+/* ================= GLOBAL COLOR TOKENS ================= */
+
+:root {
+  --brand: #2563eb;
+  --brand-hover: #1d4ed8;
+
+  --container-max: 1100px;
+  --radius: 12px;
+
+  /* LIGHT THEME */
+  --bg-main: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+
+  --border-color: #e5e7eb;
+
+  --btn-primary-bg: linear-gradient(135deg, #2563eb, #1d4ed8);
+  --btn-primary-text: #ffffff;
+
+  --shadow-soft: 0 8px 24px rgba(0,0,0,0.05);
+  --shadow-hover: 0 14px 36px rgba(0,0,0,0.08);
+}
+
+/* ================= DARK THEME TOKENS ================= */
+
+body[data-theme='dark'] {
+  --bg-main: #0f172a;
+  --bg-secondary: #111827;
+  --bg-card: #1f2933;
+
+  --text-main: #e5e7eb;
+  --text-muted: #9ca3af;
+
+  --border-color: #374151;
+
+  --btn-primary-bg: linear-gradient(135deg, #3b82f6, #2563eb);
+  --btn-primary-text: #ffffff;
+}
+
+/* ================= RESET ================= */
+
+* {
+  box-sizing: border-box;
+}
+
+/* ================= BODY ================= */
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  margin: 0;
+  background: var(--bg-main);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+/* ================= TYPOGRAPHY ================= */
+
+h1 { font-size: 2.2rem; font-weight: 700; }
+h2 { font-size: 1.8rem; font-weight: 600; }
+h3 { font-size: 1.4rem; font-weight: 600; }
+h4 { font-size: 1.1rem; font-weight: 600; }
+
+p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+/* ================= CONTAINER ================= */
+
+.container-centered {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+  width: 100%;
+  background: var(--bg-secondary);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LOGO */
+
+.navbar-left img {
+  height: 56px;
+}
+
+/* CENTER LINKS */
+
+.navbar-links {
+  display: flex;
+  gap: 28px;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: var(--text-main);
+  font-weight: 500;
+  position: relative;
+}
+
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--brand);
+  transition: width 0.3s ease;
+}
+
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+/* ACTIONS */
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+  padding: 80px 20px 50px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.hero p {
+  max-width: 760px;
+  margin: 0 auto 26px;
+  background: transparent;
+
+}
+
+/* ================= BUTTONS ================= */
+
+.btn {
+  border-radius: var(--radius);
+  padding: 10px 22px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+}
+
+.btn-outline-secondary {
+  background: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+}
+
+.btn-outline-secondary:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+/* ================= CARDS ================= */
+
+.card,
+.package-card,
+.custom-modal {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.card:hover,
+.package-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* ================= CAROUSEL ================= */
+.carousel-card { 
+  max-width: 900px; 
+  margin: 40px auto; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+} 
+.carousel-card img { height: 420px; object-fit: cover; }
+
+/* ================= FORMS ================= */
+
+input,
+textarea,
+select {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+input::placeholder {
+  color: var(--text-muted);
+}
+
+/* ================= TRACKING TIMELINE ================= */
+
+.tracking-timeline {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 24px;
+}
+
+.tracking-timeline li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+.tracking-timeline li.active {
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.tracking-timeline .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--border-color);
+  margin-right: 12px;
+}
+
+.tracking-timeline li.active .dot {
+  background: var(--brand);
+}
+
+/* ================= FOOTER ================= */
+
+.footer {
+  padding: 50px 0;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ================= AUTH PAGES ================= */
+
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+}
+
+/* ================= ANIMATIONS ================= */
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .navbar-links {
+    display: none;
+  }
+}
+
+/* ===================================================== */
+/* TYPE 1 — ANIMATED GRADIENT BACKGROUND (DASHBOARDS) */
+/* ===================================================== */
+
+.bg-animated {
+  min-height: 100vh;
+  background: linear-gradient(
+    120deg,
+    #eaf2ff,
+    #f3ecff,
+    #eef7ff
+  );
+  background-size: 400% 400%;
+  animation: gradientFlow 18s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===================================================== */
+/* TYPE 2 — TEXTURED LIGHT BACKGROUND (CONTENT PAGES) */
+/* ===================================================== */
+
+.bg-textured {
+  min-height: 100vh;
+  background-color: #f9fafc;
+  background-image:
+    linear-gradient(#eaeef5 1px, transparent 1px),
+    linear-gradient(90deg, #eaeef5 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+
+/* Card enhancement for premium feel */
+.bg-textured .card {
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+}
+
+/* ===================================================== */
+/* SOFT PAGE SECTION SPACING */
+/* ===================================================== */
+
+.page-section {
+  padding: 80px 0;
+}
+
+/* ===================================================== */
+/* SMOOTH UI TRANSITIONS */
+/* ===================================================== */
+
+.card,
+.btn,
+input,
+textarea {
+  transition: all 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+
+.bg-premium {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #f3f6ff 0%,
+    #f8f4ff 40%,
+    #eef2ff 100%
+  );
+}
+
+.section-soft {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  border-radius: 14px;
+  padding: 40px;
+}
+
+/* ======================================================
+   TYPE-2 TEXTURED LIGHT BACKGROUND (Paper / Grid Feel)
+   Used for: About, Services, Contact, Login, Register
+====================================================== */
+
+.page-textured-bg {
+  min-height: 100vh;
+  background:
+    linear-gradient(
+      rgba(255,255,255,0.96),
+      rgba(255,255,255,0.96)
+    ),
+    repeating-linear-gradient(
+      0deg,
+      #eef2f7,
+      #eef2f7 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #eef2f7,
+      #eef2f7 1px,
+      transparent 1px,
+      transparent 24px
+    );
+}
+
+/* Page header strip */
+.page-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* ======================================================
+   SERVICE PAGE UI POLISH
+====================================================== */
+
+.service-icon {
+  font-size: 42px;
+  line-height: 1;
+}
+
+/* Elevated cards */
+.elevated-card {
+  border-radius: 14px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.elevated-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* Card body spacing */
+.elevated-card .card-body {
+  padding: 28px 24px;
+}
+
+/* CTA section contrast */
+.page-textured-bg .btn-primary {
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+}
