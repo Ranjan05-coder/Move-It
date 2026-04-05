@@ -1,485 +1,976 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* ===============================
+   DARK MODE 3-LEVEL HIERARCHY
+   Level 1: Page Background (very dark)
+   Level 2: Sections/Containers (dark grey)
+   Level 3: Cards/Elements (lighter grey)
+================================ */
 
-/* ================= GLOBAL COLOR TOKENS ================= */
-
-:root {
-  --brand: #2563eb;
-  --brand-hover: #1d4ed8;
-
-  --container-max: 1100px;
-  --radius: 12px;
-
-  /* LIGHT THEME */
-  --bg-main: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-
-  --border-color: #e5e7eb;
-
-  --btn-primary-bg: linear-gradient(135deg, #2563eb, #1d4ed8);
-  --btn-primary-text: #ffffff;
-
-  --shadow-soft: 0 8px 24px rgba(0,0,0,0.05);
-  --shadow-hover: 0 14px 36px rgba(0,0,0,0.08);
+html.dark {
+  color-scheme: dark;
 }
 
-/* ================= DARK THEME TOKENS ================= */
-
-body[data-theme='dark'] {
-  --bg-main: #0f172a;
-  --bg-secondary: #111827;
-  --bg-card: #1f2933;
-
-  --text-main: #e5e7eb;
-  --text-muted: #9ca3af;
-
-  --border-color: #374151;
-
-  --btn-primary-bg: linear-gradient(135deg, #3b82f6, #2563eb);
-  --btn-primary-text: #ffffff;
+html.dark body {
+  background-color: #0f1419 !important; /* Level 1: Very dark, not pure black */
+  color: #e5e7eb !important;
 }
 
-/* ================= RESET ================= */
-
-* {
-  box-sizing: border-box;
+/* Level 2: Section backgrounds - medium grey */
+html.dark section {
+  background-color: #1a202c !important;
 }
 
-/* ================= BODY ================= */
+/* Level 3: Cards - lighter grey */
+html.dark .card,
+html.dark [class*="card"],
+html.dark [class*="rounded-2xl"],
+html.dark [class*="rounded-lg"] {
+  background-color: #2d3748 !important;
+}
+
+/* Specific component backgrounds */
+html.dark .bg-white {
+  background-color: #2d3748 !important;
+}
+
+html.dark .bg-neutral-50 {
+  background-color: #1a202c !important;
+}
+
+html.dark .bg-neutral-100 {
+  background-color: #1a202c !important;
+}
+
+/* ===============================
+   BASE STYLES
+================================ */
+
+html, body, #root {
+  @apply h-full;
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-  margin: 0;
-  background: var(--bg-main);
-  color: var(--text-main);
-  -webkit-font-smoothing: antialiased;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
+  background-attachment: fixed;
+  background: linear-gradient(135deg, #faf9f7 0%, #f5f4f1 50%, #f0ede8 100%);
+  color: #3d3428;
+  min-height: 100vh;
+  backdrop-filter: blur(80px);
 }
 
-/* ================= TYPOGRAPHY ================= */
-
-h1 { font-size: 2.2rem; font-weight: 700; }
-h2 { font-size: 1.8rem; font-weight: 600; }
-h3 { font-size: 1.4rem; font-weight: 600; }
-h4 { font-size: 1.1rem; font-weight: 600; }
-
-p {
-  font-size: 0.95rem;
-  color: var(--text-muted);
+html.dark body {
+  background: linear-gradient(135deg, #4a90a4 0%, #6ba3b8 50%, #87ceeb 100%);
+  color: #e5e7eb;
+  color-scheme: dark;
 }
 
-/* ================= CONTAINER ================= */
+/* ===============================
+   TYPOGRAPHY
+================================ */
+
+h1 { @apply text-4xl font-bold tracking-tight text-neutral-900; }
+h2 { @apply text-3xl font-semibold tracking-tight text-neutral-900; }
+h3 { @apply text-2xl font-semibold text-neutral-900; }
+h4 { @apply text-lg font-semibold text-neutral-800; }
+h5 { @apply text-base font-semibold text-neutral-800; }
+h6 { @apply text-sm font-semibold text-neutral-700; }
+
+p { @apply text-neutral-700; }
+a { @apply text-primary-700 hover:text-primary-600 transition-colors font-medium; }
+
+/* ===============================
+   BUTTONS (Premium SaaS Style with Glassmorphism)
+================================ */
+
+.btn {
+  @apply inline-flex items-center justify-center px-6 py-2.5 rounded-lg font-medium text-sm tracking-tight transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-sm {
+  @apply px-4 py-1.5 text-xs;
+}
+
+.btn-lg {
+  @apply px-8 py-3.5 text-base;
+}
+
+/* Primary Button - Glass Style */
+.btn-primary {
+  @apply bg-primary-500/30 border border-primary-400/50 text-primary-700 backdrop-blur-xl shadow-lg hover:bg-primary-500/40 hover:shadow-xl transition-all;
+}
+
+/* Glassmorphic Button - Light Mode */
+.btn-glass {
+  @apply bg-white/60 backdrop-blur-2xl border border-primary-300/50 text-neutral-900 shadow-lg hover:bg-white/80 hover:shadow-xl dark:bg-neutral-800/80 dark:border-neutral-700/40 dark:text-neutral-100 dark:hover:bg-neutral-700/90;
+}
+
+.btn-primary:disabled {
+  @apply bg-neutral-300/40 opacity-50 text-neutral-500 backdrop-blur-xl;
+}
+
+/* Secondary Button - Glass Style */
+.btn-secondary {
+  @apply bg-secondary-500/30 border border-secondary-400/50 text-secondary-700 backdrop-blur-xl shadow-md hover:bg-secondary-500/40 hover:shadow-lg;
+}
+
+/* Outline Button - Glass Style */
+.btn-outline {
+  @apply bg-neutral-100/40 border-2 border-neutral-400/50 text-neutral-700 backdrop-blur-xl hover:bg-neutral-200/50 transition-all;
+}
+
+/* Outline Primary - Glass Style */
+.btn-outline-primary {
+  @apply bg-white/40 border-2 border-primary-400/60 text-primary-700 backdrop-blur-xl hover:bg-white/60 hover:text-primary-800 transition-all;
+}
+
+/* Outline Secondary - Glass Style */
+.btn-outline-secondary {
+  @apply bg-white/40 border-2 border-secondary-400/60 text-secondary-700 backdrop-blur-xl hover:bg-white/60 hover:text-secondary-800 transition-all;
+}
+
+/* Ghost Button - Glass Style */
+.btn-ghost {
+  @apply bg-neutral-200/30 text-neutral-700 hover:bg-neutral-300/50 backdrop-blur-xl transition-all;
+}
+
+/* ===============================
+   CONTAINER
+================================ */
 
 .container-centered {
-  max-width: var(--container-max);
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 20px;
 }
 
-/* ================= NAVBAR ================= */
+/* ===============================
+   NAVBAR
+================================ */
 
 .navbar {
-  width: 100%;
-  background: var(--bg-secondary);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  @apply sticky top-0 z-50 backdrop-blur-2xl border-b border-primary-200/40;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.75), rgba(240, 247, 255, 0.65));
+  box-shadow: 0 4px 30px rgba(125, 179, 255, 0.15);
+  border-radius: 0 0 12px 12px;
 }
 
 .navbar-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 14px 24px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @apply container-centered flex items-center justify-between py-4;
 }
 
-/* LOGO */
-
-.navbar-left img {
-  height: 56px;
+.navbar-left {
+  @apply flex items-center;
 }
 
-/* CENTER LINKS */
+.logo {
+  @apply text-xl font-bold text-primary-700 no-underline transition-all hover:text-primary-600;
+}
 
 .navbar-links {
-  display: flex;
-  gap: 28px;
+  @apply hidden md:flex gap-8 items-center absolute left-1/2 -translate-x-1/2;
 }
 
 .navbar-links a {
-  text-decoration: none;
-  color: var(--text-main);
-  font-weight: 500;
-  position: relative;
+  @apply text-neutral-700 font-medium no-underline transition-all relative hover:text-primary-600;
 }
 
 .navbar-links a::after {
   content: '';
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  background: var(--brand);
-  transition: width 0.3s ease;
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary-500 transition-all duration-300;
 }
 
-.navbar-links a:hover::after {
-  width: 100%;
+.navbar-links a:hover::after,
+.navbar-links a.active::after {
+  @apply w-full;
 }
-
-/* ACTIONS */
 
 .navbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  @apply flex items-center gap-3;
 }
 
-/* ================= HERO ================= */
+.navbar-actions a,
+.navbar-actions button {
+  @apply transition-all;
+}
+
+/* ===============================
+   HERO SECTION
+================================ */
 
 .hero {
-  padding: 80px 20px 50px;
-  text-align: center;
+  @apply py-24 px-5 text-center relative overflow-hidden;
+}
+
+.hero::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-b from-primary-500/5 to-transparent pointer-events-none;
+}
+
+.hero-content {
+  @apply container-centered relative z-10;
 }
 
 .hero h1 {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 14px;
+  @apply mb-4 text-neutral-900 dark:text-neutral-50;
+}
+
+.hero h1 span {
+  @apply bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent;
 }
 
 .hero p {
-  max-width: 760px;
-  margin: 0 auto 26px;
-  background: transparent;
-
+  @apply text-lg text-neutral-600 max-w-2xl mx-auto mb-8 dark:text-neutral-400;
 }
 
-/* ================= BUTTONS ================= */
-
-.btn {
-  border-radius: var(--radius);
-  padding: 10px 22px;
-  font-weight: 500;
-  transition: all 0.25s ease;
+.hero-actions {
+  @apply flex flex-col sm:flex-row gap-4 justify-center;
 }
 
-.btn-primary {
-  background: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: none;
+/* ===============================
+   CARDS
+================================ */
+
+.card {
+  @apply rounded-2xl backdrop-blur-2xl border border-primary-200/30 shadow-2xl hover:shadow-2xl transition-all;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.60), rgba(245, 250, 255, 0.50)) !important;
+  border-radius: 16px;
 }
 
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+.card:hover {
+  @apply -translate-y-2;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.75), rgba(240, 247, 255, 0.60)) !important;
+  box-shadow: 0 20px 50px rgba(125, 179, 255, 0.2);
 }
 
-.btn-outline-secondary {
-  background: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
+.card-body {
+  background: transparent !important;
+  color: #3d3428;
 }
 
-.btn-outline-secondary:hover {
-  background: rgba(0,0,0,0.04);
+.card-text {
+  color: #6f6559;
 }
 
-/* ================= CARDS ================= */
-
-.card,
-.package-card,
-.custom-modal {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-  border: none;
-  transition: all 0.3s ease;
+.card-title {
+  color: #1f2937 !important;
 }
 
-.card:hover,
-.package-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-hover);
+.elevated-card {
+  @apply card shadow-2xl;
 }
 
-/* ================= CAROUSEL ================= */
-.carousel-card { 
-  max-width: 900px; 
-  margin: 40px auto; 
-  border-radius: 12px; 
-  overflow: hidden; 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
-} 
-.carousel-card img { height: 420px; object-fit: cover; }
+/* ===============================
+   SECTIONS
+================================ */
 
-/* ================= FORMS ================= */
+.section {
+  @apply py-20 px-5;
+}
+
+.section-alt {
+  background: linear-gradient(135deg, rgba(240, 247, 255, 0.4), rgba(235, 242, 255, 0.25));
+  @apply backdrop-blur-2xl;
+}
+
+.section-block {
+  @apply py-24 px-5;
+}
+
+.section-title {
+  @apply text-center mb-12;
+}
+
+.section-title h2 {
+  @apply mb-4;
+}
+
+.section-title p {
+  @apply text-lg max-w-2xl mx-auto text-neutral-700;
+}
+
+/* ===============================
+   FORMS
+================================ */
 
 input,
 textarea,
 select {
-  background: var(--bg-card);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 10px 14px;
+  @apply w-full px-4 py-2.5 rounded-xl border border-primary-300/50 text-neutral-900 transition-all focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent backdrop-blur-xl;
+  background: rgba(248, 251, 255, 0.6);
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.1);
+}
+
+input::placeholder {
+  @apply text-neutral-500;
+}
+
+label {
+  @apply block text-sm font-medium text-neutral-800 mb-2;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-  outline: none;
-  border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 16px rgba(125, 179, 255, 0.15);
 }
 
-input::placeholder {
-  color: var(--text-muted);
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #e5e7eb;
 }
 
-/* ================= TRACKING TIMELINE ================= */
-
-.tracking-timeline {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 24px;
+html.dark input::placeholder {
+  @apply text-white/30;
 }
 
-.tracking-timeline li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 16px;
-  color: var(--text-muted);
+html.dark label {
+  @apply text-white/80;
 }
 
-.tracking-timeline li.active {
-  color: var(--brand);
-  font-weight: 600;
+/* ===============================
+   LINKS & TEXT
+================================ */
+
+a {
+  @apply text-primary-600 no-underline transition-all hover:text-primary-700;
 }
 
-.tracking-timeline .dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--border-color);
-  margin-right: 12px;
+/* ===============================
+   PROFILE SECTION
+================================ */
+
+.profile-wrapper {
+  @apply relative inline-block;
 }
 
-.tracking-timeline li.active .dot {
-  background: var(--brand);
+.profile-icon {
+  @apply w-9 h-9 rounded-full bg-primary-500/30 text-primary-700 flex items-center justify-center font-semibold cursor-pointer transition-all hover:bg-primary-500/50 border border-primary-300/60 backdrop-blur-xl;
 }
 
-/* ================= FOOTER ================= */
+.profile-dropdown {
+  @apply absolute top-full right-0 mt-2 w-48 rounded-xl shadow-2xl border border-primary-300/40 z-50 overflow-hidden backdrop-blur-2xl;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.70), rgba(240, 247, 255, 0.60));
+  box-shadow: 0 8px 32px 0 rgba(125, 179, 255, 0.25);
+}
+
+.profile-dropdown a,
+.profile-dropdown button {
+  @apply block w-full text-left px-4 py-2.5 text-neutral-800 hover:bg-primary-50 transition-all border-none bg-transparent cursor-pointer;
+}
+
+/* ===============================
+   NOTIFICATIONS
+================================ */
+
+.notification {
+  @apply px-4 py-3 rounded-xl border flex items-start gap-3 transition-all backdrop-blur-xl;
+}
+
+.notification-success {
+  @apply bg-green-100/60 border-green-300/60 text-green-800 backdrop-blur-xl;
+}
+
+.notification-warning {
+  @apply bg-amber-100/60 border-amber-300/60 text-amber-800 backdrop-blur-xl;
+}
+
+.notification-error {
+  @apply bg-red-100/60 border-red-300/60 text-red-800 backdrop-blur-xl;
+}
+
+.notification-info {
+  @apply bg-blue-100/60 border-blue-300/60 text-blue-800 backdrop-blur-xl;
+}
+
+.notification-dropdown {
+  @apply absolute right-0 top-12 w-80 rounded-xl shadow-2xl border border-primary-300/40 z-50 backdrop-blur-2xl;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.70), rgba(240, 247, 255, 0.60));
+  box-shadow: 0 8px 32px 0 rgba(125, 179, 255, 0.25);
+}
+
+.notification-item {
+  @apply p-3 border-b border-primary-200/40 last:border-b-0 hover:bg-primary-100/40 transition-all cursor-pointer text-neutral-800 backdrop-blur-sm;
+}
+
+.notification-item.unread {
+  @apply bg-primary-100 border-l-2 border-primary-400;
+}
+
+/* ===============================
+   BADGES
+================================ */
+
+.notification-badge {
+  @apply absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full backdrop-blur-sm border border-red-300;
+}
+
+.support-badge {
+  @apply ml-2 inline-flex items-center justify-center w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full backdrop-blur-sm border border-red-300;
+}
+
+.status-badge {
+  @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm border;
+}
+
+.status-badge-success {
+  @apply bg-green-100 text-green-800 border-green-300;
+}
+
+.status-badge-warning {
+  @apply bg-amber-100 text-amber-800 border-amber-300;
+}
+
+.status-badge-error {
+  @apply bg-red-100 text-red-800 border-red-300;
+}
+
+.status-badge-info {
+  @apply bg-blue-100 text-blue-800 border-blue-300;
+}
+
+.badge {
+  @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium backdrop-blur-sm border;
+}
+
+.badge-primary {
+  @apply bg-primary-100 text-primary-800 border border-primary-300;
+}
+
+.badge-secondary {
+  @apply bg-secondary-100 text-secondary-800 border border-secondary-300;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800 border border-green-300;
+}
+
+.badge-warning {
+  @apply bg-amber-100 text-amber-800 border border-amber-300;
+}
+
+.badge-error {
+  @apply bg-red-100 text-red-800 border border-red-300;
+}
+
+/* ===============================
+   FOOTER
+================================ */
 
 .footer {
-  padding: 50px 0;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-muted);
-  text-align: center;
+  @apply bg-neutral-200 text-neutral-700 py-16;
 }
 
-/* ================= AUTH PAGES ================= */
-
-.auth-wrapper {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+.footer-text {
+  @apply text-center text-neutral-600;
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: var(--bg-card);
-  padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+/* ===============================
+   DASHBOARD
+================================ */
+
+/* Mobile-friendly dashboard wrapper */
+.dashboard-wrapper {
+  @apply flex min-h-screen;
 }
 
-/* ================= ANIMATIONS ================= */
-
-.fade-in {
-  animation: fadeIn 0.5s ease forwards;
+.dashboard-sidebar {
+  @apply fixed left-0 top-0 z-40 w-64 h-screen backdrop-blur-2xl border-r border-primary-300/40 overflow-y-auto transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:relative lg:w-64 lg:z-auto;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.70), rgba(240, 247, 255, 0.60));
+  box-shadow: 0 8px 32px 0 rgba(125, 179, 255, 0.2);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.dashboard-sidebar.open {
+  @apply translate-x-0 shadow-2xl;
 }
 
-/* ================= RESPONSIVE ================= */
+.sidebar-overlay {
+  @apply fixed inset-0 bg-black/20 z-30 lg:hidden transition-opacity duration-300 backdrop-blur-sm;
+}
+
+.sidebar {
+  @apply p-6 h-full flex flex-col;
+}
+
+.sidebar-logo {
+  @apply mb-12 font-bold text-lg text-primary-700 flex items-center justify-center;
+}
+
+.sidebar-logo img {
+  @apply w-16 h-16 rounded-lg drop-shadow-lg;
+}
+
+.sidebar-links {
+  @apply flex flex-col gap-1.5 flex-1;
+}
+
+.sidebar-links a {
+  @apply block px-4 py-3 rounded-lg text-neutral-700 no-underline transition-all hover:bg-primary-100 backdrop-blur-sm;
+}
+
+.sidebar-links a.active {
+  @apply bg-primary-100 text-primary-700 font-semibold border border-primary-300 backdrop-blur-sm;
+}
+
+.sidebar-logout-btn {
+  @apply w-full mt-auto px-4 py-3 rounded-lg text-red-700 bg-red-100 border border-red-300 font-medium transition-all hover:bg-red-200 backdrop-blur-sm cursor-pointer;
+}
+
+.dashboard-header-bar {
+  @apply lg:hidden flex items-center gap-4 p-4 backdrop-blur-xl border-b border-primary-200 sticky top-0 z-20;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.95), rgba(240, 247, 255, 0.90));
+  box-shadow: 0 4px 16px rgba(125, 179, 255, 0.1);
+}
+
+.hamburger-btn {
+  @apply lg:hidden text-2xl bg-none border-none cursor-pointer p-2 hover:bg-primary-100 rounded-lg transition-all text-neutral-800;
+}
+
+.dashboard-main {
+  @apply flex-1 flex flex-col w-full;
+}
+
+.dashboard-content {
+  @apply flex-1 p-4 md:p-6;
+}
+
+.dashboard-layout {
+  @apply flex min-h-screen gap-6 pt-20;
+}
+
+/* Glassmorphism Background - Set on body */
+
+.dashboard-header {
+  @apply flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8;
+}
+
+.dashboard-actions {
+  @apply flex flex-wrap gap-2;
+}
+
+/* Glassmorphic Metrics */
+.dashboard-metrics {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8;
+}
+
+.metric-card {
+  @apply rounded-2xl p-6 backdrop-blur-2xl border border-primary-300/30 shadow-2xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.60), rgba(240, 247, 255, 0.50));
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.15);
+}
+
+.metric-card:hover {
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.80), rgba(240, 247, 255, 0.70));
+  box-shadow: 0 16px 48px rgba(125, 179, 255, 0.25);
+}
+
+html.dark .metric-card {
+  background: linear-gradient(135deg, rgba(30, 80, 140, 0.3), rgba(50, 100, 160, 0.2));
+  border-color: rgba(125, 179, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.15);
+}
+
+.metric-card h4 {
+  @apply text-neutral-700 text-sm font-medium dark:text-neutral-200;
+}
+
+.metric-value {
+  @apply text-4xl font-bold text-primary-700 mt-2 dark:text-primary-300;
+}
+
+/* Glassmorphic Sections */
+.dashboard-section {
+  @apply rounded-2xl p-6 md:p-8 backdrop-blur-2xl border border-primary-300/30 shadow-2xl mb-6 transition-all duration-300;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.60), rgba(240, 247, 255, 0.50));
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.15);
+}
+
+html.dark .dashboard-section {
+  background: linear-gradient(135deg, rgba(30, 80, 140, 0.3), rgba(50, 100, 160, 0.2));
+  border-color: rgba(125, 179, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.2);
+}
+
+.section-header {
+  @apply mb-6;
+}
+
+.section-title {
+  @apply text-xl font-bold text-neutral-900 dark:text-neutral-100;
+}
+
+/* Responsive dashboard adjustments */
+@media (max-width: 1024px) {
+  .sidebar-overlay { @apply block; }
+}
+
+/* ===============================
+   CAROUSEL
+================================ */
+
+.carousel-card {
+  @apply max-w-4xl mx-auto rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-all;
+}
+
+.carousel-card img {
+  @apply w-full h-80 object-cover;
+}
+
+/* ===============================
+   GLASSMORPHIC TABLES & CARDS
+================================ */
+
+/* Glass Card Style */
+.saas-card {
+  @apply backdrop-blur-2xl rounded-2xl p-4 md:p-6 border border-primary-300/30;
+  background: linear-gradient(135deg, rgba(248, 251, 255, 0.60), rgba(240, 247, 255, 0.50));
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.15);
+}
+
+html.dark .saas-card {
+  background: linear-gradient(135deg, rgba(30, 80, 140, 0.3), rgba(50, 100, 160, 0.2));
+  border-color: rgba(125, 179, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.2);
+}
+
+/* Table Styles */
+.table {
+  @apply text-neutral-800 dark:text-neutral-200;
+}
+
+.table thead {
+  @apply bg-primary-100/40 backdrop-blur-xl border-b border-primary-300/40 dark:bg-primary-900/30 dark:border-primary-400/40;
+}
+
+.table thead th {
+  @apply text-neutral-900 font-semibold py-3 px-4 text-left dark:text-neutral-100;
+}
+
+.table tbody tr {
+  @apply border-b border-primary-200/40 hover:bg-primary-100/30 transition-all backdrop-blur-sm dark:border-primary-400/30 dark:hover:bg-primary-900/20;
+}
+
+.table tbody td {
+  @apply text-neutral-800 py-3 px-4 dark:text-neutral-300;
+}
+
+.table-responsive {
+  @apply overflow-x-auto;
+}
+
+/* ===============================
+   ANIMATIONS & TRANSITIONS
+================================ */
+
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-primary-600 to-secondary-500 bg-clip-text text-transparent;
+}
+
+.glass {
+  @apply bg-white/60 backdrop-blur-2xl border border-primary-300/40 dark:bg-neutral-900/70 dark:border-white/20;
+  box-shadow: 0 8px 32px rgba(125, 179, 255, 0.15);
+}
+
+/* ===============================
+   ALERTS
+================================ */
+
+.alert {
+  @apply rounded-xl p-4 backdrop-blur-2xl border transition-all;
+}
+
+.alert-info {
+  @apply bg-blue-100/50 border-blue-300/60 text-blue-800 backdrop-blur-xl dark:bg-blue-900/30 dark:border-blue-400/50 dark:text-blue-200;
+}
+
+.alert-success {
+  @apply bg-green-100/50 border-green-300/60 text-green-800 backdrop-blur-xl dark:bg-green-900/30 dark:border-green-400/50 dark:text-green-200;
+}
+
+.alert-warning {
+  @apply bg-yellow-100/50 border-yellow-300/60 text-yellow-800 backdrop-blur-xl dark:bg-yellow-900/30 dark:border-yellow-400/50 dark:text-yellow-200;
+}
+
+.alert-danger {
+  @apply bg-red-100/50 border-red-300/60 text-red-800 backdrop-blur-xl dark:bg-red-900/30 dark:border-red-400/50 dark:text-red-200;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
 
 @media (max-width: 768px) {
-  .hero h1 {
-    font-size: 30px;
+  h1 { @apply text-3xl; }
+  h2 { @apply text-2xl; }
+  
+  .hero { @apply py-12; }
+  .section { @apply py-12; }
+  .navbar-links { @apply hidden; }
+  .dashboard-metrics { @apply grid-cols-1; }
+  .carousel-card img { @apply h-64; }
+}
+
+/* ===============================
+   BLUR BACKGROUND
+================================ */
+
+.blur-bg {
+  @apply fixed inset-0 bg-black/5 backdrop-blur-lg z-40;
+}
+
+/* ===============================
+   STATUS COLORS
+================================ */
+
+.status-success {
+  @apply bg-green-50 text-green-600;
+}
+
+.status-warning {
+  @apply bg-amber-50 text-amber-600;
+}
+
+.status-error {
+  @apply bg-red-50 text-red-600;
+}
+
+.status-info {
+  @apply bg-blue-50 text-blue-600;
+}
+
+/* ===============================
+   TEXT UTILITIES
+================================ */
+
+.text-muted {
+  @apply text-neutral-600;
+}
+
+/* ===============================
+   ORDER TRACKING STYLES
+================================ */
+
+.tracking-vertical {
+  @apply relative;
+}
+
+/* Main tracking row container */
+.tracking-row {
+  @apply flex gap-4 relative transition-all duration-300;
+}
+
+.tracking-row.done .tracking-icon {
+  @apply bg-green-500 text-white scale-110 dark:bg-green-600 dark:border-green-400;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+}
+
+html.dark .tracking-row.done .tracking-icon {
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+}
+
+.tracking-row.current .tracking-icon {
+  @apply bg-primary-500 text-white scale-110 dark:bg-primary-400 dark:border-primary-300;
+  box-shadow: 0 0 0 3px rgba(125, 179, 255, 0.2);
+  animation: pulse-tracking 2s infinite;
+}
+
+html.dark .tracking-row.current .tracking-icon {
+  box-shadow: 0 0 0 4px rgba(125, 179, 255, 0.4);
+}
+
+.tracking-row.just-updated .tracking-icon {
+  animation: bounce-tracking 0.6s ease-out;
+}
+
+/* Icon column with line connector */
+.tracking-icon-col {
+  @apply relative flex flex-col items-center pt-1;
+  min-width: 60px;
+}
+
+/* Tracking icon styles */
+.tracking-icon {
+  @apply w-12 h-12 rounded-full border-2 border-primary-300 bg-primary-100/50 backdrop-blur-sm flex items-center justify-center text-lg font-bold transition-all duration-300 dark:border-primary-400 dark:bg-primary-800/40;
+  box-shadow: 0 2px 8px rgba(125, 179, 255, 0.2);
+}
+
+html.dark .tracking-icon {
+  box-shadow: 0 2px 12px rgba(125, 179, 255, 0.4);
+}
+
+.tracking-icon:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 16px rgba(125, 179, 255, 0.3);
+}
+
+html.dark .tracking-icon:hover {
+  box-shadow: 0 4px 20px rgba(125, 179, 255, 0.5);
+}
+
+/* Animated connecting line */
+.tracking-line {
+  @apply w-1 flex-1 bg-gradient-to-b from-primary-300/60 to-primary-200/40 dark:from-primary-400/60 dark:to-primary-500/40;
+  min-height: 50px;
+  background: linear-gradient(to bottom, 
+    rgba(125, 179, 255, 0.6) 0%, 
+    rgba(125, 179, 255, 0.4) 100%);
+  box-shadow: 0 0 10px rgba(125, 179, 255, 0.2);
+  animation: line-flow 3s ease-in-out infinite;
+}
+
+html.dark .tracking-line {
+  background: linear-gradient(to bottom, 
+    rgba(139, 193, 245, 0.7) 0%, 
+    rgba(125, 179, 255, 0.5) 100%);
+  box-shadow: 0 0 15px rgba(125, 179, 255, 0.4);
+}
+
+/* Tracking content area */
+.tracking-content {
+  @apply flex-1 py-2 px-3 rounded-lg backdrop-blur-sm transition-all duration-300;
+  background: rgba(248, 251, 255, 0.4);
+  border-left: 2px solid transparent;
+}
+
+html.dark .tracking-content {
+  background: rgba(125, 179, 255, 0.15);
+  color: #e5e7eb;
+}
+
+.tracking-row.done .tracking-content {
+  background: rgba(34, 197, 94, 0.1);
+  border-left-color: rgb(34, 197, 94);
+}
+
+html.dark .tracking-row.done .tracking-content {
+  background: rgba(34, 197, 94, 0.2);
+  border-left-color: rgb(74, 222, 128);
+}
+
+.tracking-row.current .tracking-content {
+  background: rgba(125, 179, 255, 0.15);
+  border-left-color: rgb(125, 179, 255);
+  box-shadow: 0 4px 12px rgba(125, 179, 255, 0.15);
+}
+
+html.dark .tracking-row.current .tracking-content {
+  background: rgba(125, 179, 255, 0.25);
+  border-left-color: rgb(139, 193, 245);
+  box-shadow: 0 4px 16px rgba(125, 179, 255, 0.3);
+}
+
+.tracking-content .fw-semibold {
+  @apply font-bold text-neutral-900 mb-1 dark:text-white;
+}
+
+.tracking-content .text-muted {
+  @apply text-neutral-600 text-xs dark:text-neutral-400;
+}
+
+.tracking-content .small {
+  @apply text-xs dark:text-neutral-300;
+}
+
+.tracking-content .fst-italic {
+  @apply italic opacity-70 dark:opacity-80;
+}
+
+/* Order summary grid */
+.order-summary-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+.order-summary-grid > div {
+  @apply flex flex-col gap-1 p-3 rounded-lg backdrop-blur-sm;
+  background: rgba(248, 251, 255, 0.3);
+}
+
+html.dark .order-summary-grid > div {
+  background: rgba(125, 179, 255, 0.15);
+  border: 1px solid rgba(125, 179, 255, 0.2);
+}
+
+.order-summary-grid strong {
+  @apply text-neutral-900 font-semibold dark:text-white;
+}
+
+/* Animations */
+
+@keyframes pulse-tracking {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 3px rgba(125, 179, 255, 0.2);
   }
-
-  .navbar-links {
-    display: none;
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 8px rgba(125, 179, 255, 0.1);
   }
 }
 
-/* ===================================================== */
-/* TYPE 1 — ANIMATED GRADIENT BACKGROUND (DASHBOARDS) */
-/* ===================================================== */
-
-.bg-animated {
-  min-height: 100vh;
-  background: linear-gradient(
-    120deg,
-    #eaf2ff,
-    #f3ecff,
-    #eef7ff
-  );
-  background-size: 400% 400%;
-  animation: gradientFlow 18s ease infinite;
+@keyframes bounce-tracking {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-@keyframes gradientFlow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes line-flow {
+  0%, 100% {
+    opacity: 0.5;
+    background: linear-gradient(to bottom, 
+      rgba(125, 179, 255, 0.4) 0%, 
+      rgba(125, 179, 255, 0.2) 100%);
+  }
+  50% {
+    opacity: 1;
+    background: linear-gradient(to bottom, 
+      rgba(125, 179, 255, 0.8) 0%, 
+      rgba(125, 179, 255, 0.6) 100%);
+  }
 }
 
-/* ===================================================== */
-/* TYPE 2 — TEXTURED LIGHT BACKGROUND (CONTENT PAGES) */
-/* ===================================================== */
-
-.bg-textured {
-  min-height: 100vh;
-  background-color: #f9fafc;
-  background-image:
-    linear-gradient(#eaeef5 1px, transparent 1px),
-    linear-gradient(90deg, #eaeef5 1px, transparent 1px);
-  background-size: 28px 28px;
+/* Feedback and completion sections */
+.form-control {
+  @apply w-full px-4 py-3 rounded-lg border border-primary-300/50 text-neutral-900 backdrop-blur-xl dark:text-neutral-100 dark:border-primary-400/50 dark:bg-primary-900/20;
+  background: rgba(248, 251, 255, 0.6);
 }
 
-
-/* Card enhancement for premium feel */
-.bg-textured .card {
-  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+html.dark .form-control {
+  background: rgba(30, 80, 140, 0.2);
 }
 
-/* ===================================================== */
-/* SOFT PAGE SECTION SPACING */
-/* ===================================================== */
-
-.page-section {
-  padding: 80px 0;
+.form-control:focus {
+  @apply outline-none ring-2 ring-primary-400 dark:ring-primary-300;
+  background: rgba(255, 255, 255, 1);
 }
 
-/* ===================================================== */
-/* SMOOTH UI TRANSITIONS */
-/* ===================================================== */
-
-.card,
-.btn,
-input,
-textarea {
-  transition: all 0.25s ease;
+html.dark .form-control:focus {
+  background: rgba(30, 80, 140, 0.4);
 }
 
-.card:hover {
-  transform: translateY(-4px);
+.btn-success {
+  @apply bg-green-500/30 border border-green-400/50 text-green-700 backdrop-blur-xl shadow-lg hover:bg-green-500/40 hover:shadow-xl transition-all dark:bg-green-600/40 dark:border-green-400/60 dark:text-green-200 dark:hover:bg-green-600/50;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
-
-
-.bg-premium {
-  min-height: 100vh;
-  background: linear-gradient(
-    135deg,
-    #f3f6ff 0%,
-    #f8f4ff 40%,
-    #eef2ff 100%
-  );
-}
-
-.section-soft {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(6px);
-  border-radius: 14px;
-  padding: 40px;
-}
-
-/* ======================================================
-   TYPE-2 TEXTURED LIGHT BACKGROUND (Paper / Grid Feel)
-   Used for: About, Services, Contact, Login, Register
-====================================================== */
-
-.page-textured-bg {
-  min-height: 100vh;
-  background:
-    linear-gradient(
-      rgba(255,255,255,0.96),
-      rgba(255,255,255,0.96)
-    ),
-    repeating-linear-gradient(
-      0deg,
-      #eef2f7,
-      #eef2f7 1px,
-      transparent 1px,
-      transparent 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      #eef2f7,
-      #eef2f7 1px,
-      transparent 1px,
-      transparent 24px
-    );
-}
-
-/* Page header strip */
-.page-header {
-  border-bottom: 1px solid var(--border-color);
-}
-
-/* ======================================================
-   SERVICE PAGE UI POLISH
-====================================================== */
-
-.service-icon {
-  font-size: 42px;
-  line-height: 1;
-}
-
-/* Elevated cards */
-.elevated-card {
-  border-radius: 14px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-}
-
-.elevated-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
-}
-
-/* Card body spacing */
-.elevated-card .card-body {
-  padding: 28px 24px;
-}
-
-/* CTA section contrast */
-.page-textured-bg .btn-primary {
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
-}

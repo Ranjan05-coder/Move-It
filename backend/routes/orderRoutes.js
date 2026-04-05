@@ -6,61 +6,81 @@ const permit = require('../middleware/roles');
 const orderController = require('../controllers/orderController');
 
 /* =========================
-   ADMIN ROUTES (TOP)
+   RAZORPAY ROUTES (ADD THIS FIRST)
 ========================= */
 
-// ✅ ADMIN – GET ALL ORDERS
+// Create Razorpay order
+router.post(
+  '/:id/razorpay/create',
+  auth,
+  permit('USER'),
+  orderController.createRazorpayOrder
+);
+
+// Verify Razorpay payment
+router.post(
+  '/:id/razorpay/verify',
+  auth,
+  permit('USER'),
+  orderController.verifyPayment
+);
+
+/* =========================
+   ADMIN ROUTES
+========================= */
+
 router.get('/', auth, permit('ADMIN'), orderController.getAllOrders);
 
-// Assign team
 router.put('/:id/assign', auth, permit('ADMIN'), orderController.assignOrder);
 
-// Confirm depart
-router.put('/:id/confirm-depart', auth, permit('ADMIN'), orderController.confirmDepart);
-
-// Confirm arrive
-router.put('/:id/confirm-arrive', auth, permit('ADMIN'), orderController.confirmArrive);
-
-// Confirm completion
-router.put('/:id/confirm-complete', auth, permit('ADMIN'), orderController.confirmCompletion);
-
+router.put(
+  '/:id/confirm-complete',
+  auth,
+  permit('ADMIN'),
+  orderController.confirmCompletion
+);
 
 /* =========================
    TEAM ROUTES
 ========================= */
 
-// Get orders assigned to team
 router.get('/team', auth, permit('TEAM'), orderController.getTeamOrders);
 
-// Notify depart
-router.post('/:id/depart', auth, permit('TEAM'), orderController.teamDepartNotify);
+router.post(
+  '/:id/depart',
+  auth,
+  permit('TEAM'),
+  orderController.teamDepartNotify
+);
 
-// Notify arrive
-router.post('/:id/arrive', auth, permit('TEAM'), orderController.teamArriveNotify);
-
+router.post(
+  '/:id/arrive',
+  auth,
+  permit('TEAM'),
+  orderController.teamArriveNotify
+);
 
 /* =========================
    USER ROUTES
 ========================= */
 
-// Create order
 router.post('/', auth, permit('USER'), orderController.createOrder);
 
-// Get logged-in user's orders
 router.get('/my', auth, permit('USER'), orderController.getMyOrders);
 
-// Mark order as paid
 router.put('/:id/pay', auth, permit('USER'), orderController.markPaid);
 
-// Submit feedback
-router.post('/:id/feedback', auth, permit('USER'), orderController.submitFeedback);
-
+router.post(
+  '/:id/feedback',
+  auth,
+  permit('USER'),
+  orderController.submitFeedback
+);
 
 /* =========================
-   COMMON (LAST)
+   COMMON
 ========================= */
 
-// Get single order
 router.get('/:id', auth, orderController.getOrderById);
 
 module.exports = router;

@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../api/axios';
+import {
+  fetchNotifications,
+  deleteNotification // 🔥 NEW
+} from '../../api/notification';
 
 export default function NotificationPanel() {
   const [notifications, setNotifications] = useState([]);
@@ -7,22 +10,13 @@ export default function NotificationPanel() {
 
   const loadNotifications = async () => {
     try {
-      const res = await api.get('/notifications');
-      setNotifications(res.data || []);
+      setLoading(true);
+      const data = await fetchNotifications();
+      setNotifications(data || []);
     } catch (err) {
-      console.error('Failed to load notifications', err);
-      setNotifications([]);
+      console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const markRead = async (id) => {
-    try {
-      await api.put(`/notifications/${id}/read`);
-      loadNotifications();
-    } catch (err) {
-      console.error('Failed to mark notification read', err);
     }
   };
 
@@ -30,38 +24,38 @@ export default function NotificationPanel() {
     loadNotifications();
   }, []);
 
-  return (
-    <div className="card mb-4">
-      <div className="card-body">
-        <h5 className="mb-3">Notifications</h5>
+  const handleRead = async (id) => {
+    try {
+      // 🔥 DELETE notification instead of mark read
+      await deleteNotification(id);
+      loadNotifications();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-        {loading && <p className="text-muted">Loading notifications...</p>}
+  return (
+    <div className="card elevated-card mb-4">
+      <div className="card-body">
+        <h5 className="fw-semibold mb-3">🔔 Notifications</h5>
+
+        {loading && <p>Loading…</p>}
 
         {!loading && notifications.length === 0 && (
           <p className="text-muted">No notifications</p>
         )}
 
         {notifications.map(n => (
-          <div
-            key={n._id}
-            className={`border-bottom py-2 ${
-              !n.read ? 'bg-light' : ''
-            }`}
-          >
+          <div key={n._id} className="mb-2">
             <div className="d-flex justify-content-between align-items-center">
-              <span>
-                {!n.read && <strong>• </strong>}
-                {n.message}
-              </span>
+              <span>{n.message}</span>
 
-              {!n.read && (
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={() => markRead(n._id)}
-                >
-                  Mark read
-                </button>
-              )}
+              <button
+                className="btn btn-sm btn-outline-success"
+                onClick={() => handleRead(n._id)}
+              >
+                Read
+              </button>
             </div>
           </div>
         ))}

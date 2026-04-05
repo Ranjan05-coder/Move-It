@@ -31,12 +31,30 @@ const orderSchema = new mongoose.Schema({
   },
 
   // PAYMENT
-  payment: {
-    method: { type: String, enum: ['stripe', 'cod', 'mock'], default: 'mock' },
-    paid: { type: Boolean, default: false },
-    paymentId: String,
-    paidAt: Date
+payment: {
+  method: {
+    type: String,
+    enum: ['stripe', 'cod', 'mock', 'razorpay'],   // ✅ add razorpay
+    default: 'mock'
   },
+
+  razorpayOrderId: String,
+
+  paymentId: String,
+
+  amount: Number,
+
+  currency: String,
+
+  status: {
+    type: String,
+    enum: ['PENDING', 'SUCCESS', 'FAILED'],
+    default: 'PENDING'
+  },
+
+  paidAt: Date
+},
+
 
   // ASSIGNED TEAM
   assignedTeam: {

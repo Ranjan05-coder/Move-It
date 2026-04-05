@@ -3,6 +3,7 @@ import api from '../api/axios';
 import OrderCard from '../components/OrderCard';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import DashboardLayout from '../layout/DashboardLayout';
 
 export default function MyOrders() {
   const { user } = useContext(AuthContext);
@@ -11,19 +12,17 @@ export default function MyOrders() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // ⛔ ROLE GUARD
+  // ROLE GUARD
   if (!user || user.role !== 'USER') {
     return (
-      <div className="page-textured-bg">
-        <div className="container-centered py-5">
-          <div className="card elevated-card p-4 text-center">
-            <h4 className="fw-semibold">Access Restricted</h4>
-            <p className="text-muted mb-0">
-              This page is available only for customers.
-            </p>
-          </div>
+      <DashboardLayout>
+        <div className="saas-card text-center">
+          <h4>Access Restricted</h4>
+          <p className="text-muted mb-0">
+            This page is available only for customers.
+          </p>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
@@ -43,24 +42,17 @@ export default function MyOrders() {
   }, []);
 
   return (
-    <div className="page-textured-bg">
+    <DashboardLayout>
+      <div className="dashboard-container">
 
-      {/* ================= PAGE HEADER ================= */}
-      <section className="page-header text-center">
-        <div className="container-centered py-5">
-          <h1 className="fw-bold">My Orders</h1>
-          <p className="text-muted mt-2">
-            Track and manage your moving requests.
-          </p>
+        {/* HEADER */}
+        <div className="dashboard-header">
+          <h2>My Orders</h2>
         </div>
-      </section>
-
-      {/* ================= MAIN CONTENT ================= */}
-      <section className="container-centered pb-5">
 
         {/* LOADING */}
         {loading && (
-          <div className="card elevated-card p-4 text-center">
+          <div className="saas-card text-center">
             <p className="text-muted mb-0">
               Loading your orders…
             </p>
@@ -69,26 +61,24 @@ export default function MyOrders() {
 
         {/* ERROR */}
         {!loading && error && (
-          <div className="card elevated-card p-4 text-center">
+          <div className="saas-card text-center">
             <p className="text-danger mb-0">{error}</p>
           </div>
         )}
 
-        {/* ORDERS LIST */}
+        {/* ORDERS */}
         {!loading && !error && orders.length > 0 && (
-          <div className="row g-4">
+          <div className="dashboard-section">
             {orders.map(order => (
-              <div className="col-12" key={order._id}>
-                <OrderCard order={order} />
-              </div>
+              <OrderCard key={order._id} order={order} />
             ))}
           </div>
         )}
 
-        {/* EMPTY STATE */}
+        {/* EMPTY */}
         {!loading && !error && orders.length === 0 && (
-          <div className="card elevated-card p-5 text-center">
-            <h5 className="fw-semibold mb-2">
+          <div className="saas-card text-center">
+            <h5 className="mb-2">
               You haven’t booked any moves yet
             </h5>
             <p className="text-muted mb-4">
@@ -101,7 +91,7 @@ export default function MyOrders() {
           </div>
         )}
 
-      </section>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

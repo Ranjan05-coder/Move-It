@@ -6,9 +6,12 @@ const permit = require('../middleware/roles');
 const notificationController = require('../controllers/notificationController');
 
 /**
- * Get notifications for logged-in user
- * ADMIN → admin notifications
- * TEAM / USER → their own notifications (future-ready)
+ * ===============================
+ * GET MY NOTIFICATIONS
+ * ===============================
+ * ADMIN  → admin notifications
+ * TEAM   → team notifications
+ * USER   → user notifications
  */
 router.get(
   '/',
@@ -18,13 +21,27 @@ router.get(
 );
 
 /**
- * Mark notification as read
+ * ===============================
+ * MARK NOTIFICATION AS READ
+ * ===============================
  */
 router.put(
   '/:id/read',
   auth,
   permit('ADMIN', 'TEAM', 'USER'),
   notificationController.markAsRead
+);
+
+/**
+ * ===============================
+ * DELETE NOTIFICATION (OPTIONAL)
+ * ===============================
+ */
+router.delete(
+  '/:id',
+  auth,
+  permit('ADMIN', 'TEAM', 'USER'),
+  notificationController.deleteNotification
 );
 
 module.exports = router;

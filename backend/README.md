@@ -9,7 +9,7 @@
    npm run dev
 
 ## Notes
-- Default port: 5000 (change via PORT in .env)
+- Default port: 3000 (change via PORT in .env)
 - Endpoints:
   - POST /api/auth/register
   - POST /api/auth/login
