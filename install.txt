@@ -1,0 +1,120 @@
+================================
+MOVE-IT - INSTALLATION GUIDE
+================================
+
+PREREQUISITES:
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- MongoDB (local or cloud instance)
+- Git
+- Razorpay account (for payment processing)
+
+INSTALLATION STEPS:
+
+1. CLONE THE REPOSITORY
+git clone https://github.com/Ranjan05-coder/Move-It.git
+cd Move-It
+
+2. BACKEND SETUP
+cd backend
+npm install
+
+3. CONFIGURE BACKEND ENVIRONMENT
+Create .env file with the following variables:
+- PORT=5000
+- DATABASE_URL=<your-mongodb-connection-string>
+- JWT_SECRET=<your-secret-key>
+- RAZORPAY_KEY_ID=<your-razorpay-key>
+- RAZORPAY_KEY_SECRET=<your-razorpay-secret>
+- GMAIL_USER=<your-email>
+- GMAIL_PASSWORD=<your-app-password>
+- NODE_ENV=development
+
+4. FRONTEND SETUP
+cd ../frontend
+npm install
+
+5. CONFIGURE FRONTEND ENVIRONMENT
+Create .env file (if needed) with:
+- VITE_API_BASE_URL=http://localhost:5000
+
+RUNNING THE APPLICATION:
+
+BACKEND:
+cd backend
+npm start
+Backend server runs on http://localhost:5000
+API endpoints: http://localhost:5000/api/*
+
+FRONTEND:
+cd frontend
+npm run dev
+Frontend development server runs on http://localhost:5173
+
+RUNNING BOTH SIMULTANEOUSLY:
+Open two terminals and run backend and frontend commands in each.
+
+BUILD FOR PRODUCTION:
+
+Frontend:
+cd frontend
+npm run build
+Output directory: frontend/dist/
+
+Backend Production:
+npm start (in production mode with NODE_ENV=production)
+
+DEPLOYMENT:
+
+Railway Deployment (Backend):
+- Configure using railway.json
+- Set environment variables in Railway dashboard
+- Deploy: railway up
+
+Vercel Deployment (Frontend & Backend):
+- Configure using vercel.json
+- Push to GitHub
+- Connected repository auto-deploys on push
+
+TROUBLESHOOTING:
+
+Port Already in Use:
+- Change PORT in backend .env
+- Frontend port configured in vite.config.js
+
+Dependencies Issues:
+rm -r node_modules
+npm install
+
+MongoDB Connection Error:
+- Verify DATABASE_URL in .env
+- Ensure MongoDB service is running
+- Check network access if using cloud database
+
+API Connection Error:
+- Verify VITE_API_BASE_URL in frontend .env
+- Check backend is running on correct port
+- Review CORS settings in backend
+
+SUPPORT:
+- See README.md for more information
+- Check backend/README.md for API documentation
+- Review component structure in frontend/src/components/
+
+PROJECT STRUCTURE:
+backend/
+  - config/: Database and payment configurations
+  - controllers/: Business logic for routes
+  - models/: MongoDB schemas
+  - routes/: API endpoints
+  - middleware/: Authentication and authorization
+  - utils/: Helper functions
+
+frontend/
+  - src/components/: Reusable React components
+  - src/pages/: Page components
+  - src/context/: React Context API
+  - src/api/: API calls and axios setup
+  - src/styles/: Global styles
+
+================================

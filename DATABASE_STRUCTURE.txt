@@ -1,0 +1,502 @@
+╔════════════════════════════════════════════════════════════════════════════════╗
+║                    MOVE-IT - DATABASE STRUCTURE GUIDE                           ║
+╚════════════════════════════════════════════════════════════════════════════════╝
+
+Database: MongoDB
+Connection: Configured in backend/config/db.js
+
+─────────────────────────────────────────────────────────────────────────────────
+
+COLLECTIONS OVERVIEW
+─────────────────────────────────────────────────────────────────────────────────
+
+1. Users            → User accounts & authentication
+2. Orders           → Moving service orders & payments
+3. Packages         → Service packages offered
+4. Vehicles         → Fleet vehicles management
+5. Crews            → Team members & helpers
+6. ContactMessages  → Customer contact form submissions
+7. Notifications    → User notifications & alerts
+
+
+QUICK REFERENCE TABLE
+─────────────────────────────────────────────────────────────────────────────────
+
+┌─────────────────┬──────────────────────────┬──────────────────────────────┐
+│ Collection      │ Purpose                  │ Key Fields                   │
+├─────────────────┼──────────────────────────┼──────────────────────────────┤
+│ Users           │ User accounts & auth     │ name, email, role, isActive  │
+│ Orders          │ Service orders           │ customer, package, payment   │
+│ Packages        │ Service offerings        │ name, price, features        │
+│ Vehicles        │ Fleet management         │ regNo, type, capacity        │
+│ Crews           │ Team members             │ team, name, role, rating     │
+│ ContactMessages │ Contact submissions      │ name, email, status, reply   │
+│ Notifications   │ User alerts              │ recipient, type, read        │
+└─────────────────┴──────────────────────────┴──────────────────────────────┘
+
+
+════════════════════════════════════════════════════════════════════════════════
+  1. USERS COLLECTION
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store user account information and authentication data
+Collection Name: users
+
+
+FIELD DETAILS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field           Type        Required    Default       Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id             ObjectId    Yes         Auto          MongoDB document ID
+  name            String      Yes         -             User's full name
+  email           String      Yes         -             Email (unique)
+  passwordHash    String      Yes         -             Hashed password
+  role            String      No          'USER'        USER | ADMIN | TEAM
+  isActive        Boolean     No          true          Account status
+  createdAt       Date        No          Auto          Creation time
+  updatedAt       Date        No          Auto          Last update time
+
+
+INDEXES:  email (unique)
+
+RELATIONSHIPS:
+  • Referenced in Orders (customer field)
+  • Referenced in Orders (assignedTeam field)
+  • Referenced in Crews (team field)
+  • Referenced in ContactMessages (user field)
+  • Referenced in Notifications (recipient field)
+
+
+EXAMPLE DOCUMENT:
+────────────────────────────────────────────────────────────────────────────────
+{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "name": "John Doe",
+  "email": "john@example.com",
+  "passwordHash": "$2b$10$...",
+  "role": "USER",
+  "isActive": true,
+  "createdAt": ISODate("2024-01-15T10:30:00Z"),
+  "updatedAt": ISODate("2024-01-15T10:30:00Z")
+}
+
+
+════════════════════════════════════════════════════════════════════════════════
+  2. ORDERS COLLECTION (Most Complex)
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store customer orders for moving services
+Collection Name: orders
+
+
+MAIN FIELDS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field               Type        Required    Default      Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id                 ObjectId    Yes         Auto         Document ID
+  customer            ObjectId    Yes         -            User reference
+  package             ObjectId    Yes         -            Package reference
+  additionalServices  Array       No          []           Extra services
+  pickupAddress       String      Yes         -            Pickup location
+  dropAddress         String      Yes         -            Delivery location
+  scheduledAt         Date        Yes         -            Scheduled time
+  assignedTeam        ObjectId    No          null         Team member ID
+  status              String      No          'PLACED'     Order status
+  feedback            Object      No          -            Rating & comment
+  tracking            Array       No          []           History log
+  createdAt           Date        No          Auto         Created time
+  updatedAt           Date        No          Auto         Updated time
+
+
+NESTED: priceBreakdown
+─────────────────────────────────────────────────────────────────────────────────
+  basePrice      Number    Base package price
+  addonsPrice    Number    Additional services cost (default: 0)
+  total          Number    Total amount
+
+
+NESTED: payment
+─────────────────────────────────────────────────────────────────────────────────
+  method             String    Payment method
+  razorpayOrderId    String    Razorpay order ID
+  paymentId          String    Transaction ID
+  amount             Number    Amount paid
+  currency           String    Currency (e.g., INR)
+  status             String    PENDING | SUCCESS | FAILED
+  paidAt             Date      Payment completion time
+
+
+ORDER STATUS WORKFLOW
+─────────────────────────────────────────────────────────────────────────────────
+  PLACED  →  PAID  →  ASSIGNED  →  DEPARTED  →  ARRIVED  →  COMPLETED
+                                                               ↓
+                                                           CANCELLED
+
+
+NESTED: feedback
+─────────────────────────────────────────────────────────────────────────────────
+  rating         Number    1-5 star rating
+  comment        String    Customer review
+  submittedAt    Date      Submission timestamp
+
+
+INDEXES:  customer, assignedTeam, status, createdAt
+
+RELATIONSHIPS:
+  • References User (customer)
+  • References User (assignedTeam)
+  • References Package
+
+
+EXAMPLE DOCUMENT:
+────────────────────────────────────────────────────────────────────────────────
+{
+  "_id": ObjectId("507f1f77bcf86cd799439012"),
+  "customer": ObjectId("507f1f77bcf86cd799439011"),
+  "package": ObjectId("507f1f77bcf86cd799439020"),
+  "pickupAddress": "123 Main St, Mumbai",
+  "dropAddress": "456 Oak Ave, Mumbai",
+  "scheduledAt": ISODate("2024-02-20T14:00:00Z"),
+  "priceBreakdown": {
+    "basePrice": 15000,
+    "addonsPrice": 5000,
+    "total": 20000
+  },
+  "payment": {
+    "method": "razorpay",
+    "razorpayOrderId": "order_1234567890",
+    "paymentId": "pay_1234567890",
+    "amount": 20000,
+    "currency": "INR",
+    "status": "SUCCESS",
+    "paidAt": ISODate("2024-02-15T10:00:00Z")
+  },
+  "assignedTeam": ObjectId("507f1f77bcf86cd799439013"),
+  "status": "COMPLETED",
+  "feedback": {
+    "rating": 5,
+    "comment": "Excellent service!",
+    "submittedAt": ISODate("2024-02-21T15:00:00Z")
+  },
+  "tracking": [
+    {
+      "status": "PLACED",
+      "note": "Order placed by customer",
+      "timestamp": ISODate("2024-02-15T08:00:00Z")
+    }
+  ],
+  "createdAt": ISODate("2024-02-15T08:00:00Z"),
+  "updatedAt": ISODate("2024-02-21T15:00:00Z")
+}
+
+
+════════════════════════════════════════════════════════════════════════════════
+  3. PACKAGES COLLECTION
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store predefined moving service packages
+Collection Name: packages
+
+
+FIELD DETAILS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field           Type        Required    Default       Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id             ObjectId    Yes         Auto          Document ID
+  name            String      Yes         -             Package name
+  description     String      No          -             Description
+  price           Number      Yes         -             Price in INR
+  features        Array       No          []            List of features
+  isPopular       Boolean     No          false         Featured flag
+
+
+EXAMPLE PACKAGES
+─────────────────────────────────────────────────────────────────────────────────
+  ┌────────────────┬─────────┬────────────────────────────────────────────┐
+  │ Package Name   │ Price   │ Features                                   │
+  ├────────────────┼─────────┼────────────────────────────────────────────┤
+  │ Basic Van      │ ₹5,000  │ • Moving truck                             │
+  │                │         │ • Basic equipment                          │
+  │                │         │ • 2 helpers                                │
+  │                │         │ • 2 hour service                           │
+  ├────────────────┼─────────┼────────────────────────────────────────────┤
+  │ Premium Van    │ ₹8,000  │ • Moving truck                             │
+  │                │         │ • Full equipment                           │
+  │                │         │ • 3 helpers                                │
+  │                │         │ • 4 hour service                           │
+  ├────────────────┼─────────┼────────────────────────────────────────────┤
+  │ Truck          │ ₹12,000 │ • Large truck                              │
+  │                │         │ • Full equipment                           │
+  │                │         │ • 4 helpers                                │
+  │                │         │ • 6 hour service                           │
+  └────────────────┴─────────┴────────────────────────────────────────────┘
+
+
+════════════════════════════════════════════════════════════════════════════════
+  4. VEHICLES COLLECTION
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store fleet details and vehicle availability
+Collection Name: vehicles
+
+
+FIELD DETAILS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field               Type        Required    Default       Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id                 ObjectId    Yes         Auto          Document ID
+  regNo               String      No          -             Registration number
+  type                String      No          'van'         van | truck | tempo
+  capacityCubicFeet   Number      No          -             Storage capacity
+  isAvailable         Boolean     No          true          Availability status
+  createdAt           Date        No          Auto          Registration date
+  updatedAt           Date        No          Auto          Last update
+
+
+VEHICLE TYPES
+─────────────────────────────────────────────────────────────────────────────────
+  ┌─────────┬─────────────────┬──────────────────────────┐
+  │ Type    │ Capacity (ft³)  │ Best For                 │
+  ├─────────┼─────────────────┼──────────────────────────┤
+  │ Van     │ 200-300         │ Small to medium moves    │
+  │ Truck   │ 400-600         │ Large moves              │
+  │ Tempo   │ 150-200         │ Quick short moves        │
+  └─────────┴─────────────────┴──────────────────────────┘
+
+
+INDEXES:  regNo, type, isAvailable
+
+
+════════════════════════════════════════════════════════════════════════════════
+  5. CREWS COLLECTION
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store team member information managed by team users
+Collection Name: crews
+
+
+FIELD DETAILS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field              Type        Required    Default       Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id                ObjectId    Yes         Auto          Document ID
+  team               ObjectId    Yes         -             Team owner (User)
+  name               String      Yes         -             Member name
+  phone              String      No          -             Phone number
+  email              String      No          -             Email (lowercase)
+  role               String      No          'Helper'      Position/role
+  isActive           Boolean     No          true          Active status
+  assignedOrders     Number      No          0             Total assigned
+  completedOrders    Number      No          0             Total completed
+  rating             Number      No          0             Performance rating
+
+
+CREW ROLES
+─────────────────────────────────────────────────────────────────────────────────
+  Driver       → Vehicle driver
+  Helper       → Moving assistant
+  Supervisor   → Team supervisor/lead
+  Manager      → Operations manager
+
+
+INDEXES:  team, email
+
+
+EXAMPLE DOCUMENT:
+────────────────────────────────────────────────────────────────────────────────
+{
+  "_id": ObjectId("507f1f77bcf86cd799439015"),
+  "team": ObjectId("507f1f77bcf86cd799439013"),
+  "name": "Ravi Kumar",
+  "phone": "+91-9876543210",
+  "email": "ravi@example.com",
+  "role": "Helper",
+  "isActive": true,
+  "assignedOrders": 15,
+  "completedOrders": 14,
+  "rating": 4.8
+}
+
+
+════════════════════════════════════════════════════════════════════════════════
+  6. CONTACTMESSAGES COLLECTION
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store customer contact form submissions
+Collection Name: contactmessages
+
+
+FIELD DETAILS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field           Type        Required    Default       Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id             ObjectId    Yes         Auto          Document ID
+  user            ObjectId    No          null          User reference
+  name            String      Yes         -             Sender name
+  email           String      Yes         -             Sender email
+  message         String      Yes         -             Message content
+  status          String      No          'NEW'         NEW | READ | REPLIED
+  createdAt       Date        No          Auto          Submission time
+  updatedAt       Date        No          Auto          Update time
+
+
+NESTED: reply
+─────────────────────────────────────────────────────────────────────────────────
+  message        String    Admin reply content
+  repliedAt      Date      Reply timestamp
+
+
+STATUS WORKFLOW
+─────────────────────────────────────────────────────────────────────────────────
+  NEW  →  READ  →  REPLIED
+
+
+INDEXES:  status, email, createdAt
+
+
+════════════════════════════════════════════════════════════════════════════════
+  7. NOTIFICATIONS COLLECTION
+════════════════════════════════════════════════════════════════════════════════
+
+Purpose: Store user notifications and alerts
+Collection Name: notifications
+
+
+FIELD DETAILS
+─────────────────────────────────────────────────────────────────────────────────
+
+  Field           Type        Required    Default       Description
+  ──────────────────────────────────────────────────────────────────────────
+  _id             ObjectId    Yes         Auto          Document ID
+  recipient       ObjectId    No          null          User receiving
+  forRole         String      Yes         -             USER | ADMIN | TEAM
+  type            String      No          -             Notification type
+  message         String      No          -             Alert message
+  link            String      No          -             Navigation link
+  read            Boolean     No          false         Read status
+  createdAt       Date        No          Auto          Creation time
+  updatedAt       Date        No          Auto          Update time
+
+
+NOTIFICATION TYPES
+─────────────────────────────────────────────────────────────────────────────────
+  ORDER_PLACED           → New order received (ADMIN, TEAM)
+  ORDER_CONFIRMED        → Order confirmed (USER)
+  ORDER_ASSIGNED         → Order assigned to team (TEAM)
+  PAYMENT_SUCCESS        → Payment completed (USER)
+  ORDER_COMPLETED        → Order completed (USER)
+  ORDER_CANCELLED        → Order cancelled (USER)
+  FEEDBACK_REQUESTED     → Feedback needed (USER)
+  NEW_CREW_MEMBER        → Crew member added (TEAM)
+  NEW_MESSAGE            → Contact message (ADMIN)
+
+
+INDEXES:  recipient, forRole, read, createdAt
+
+
+════════════════════════════════════════════════════════════════════════════════
+  RELATIONSHIPS DIAGRAM
+════════════════════════════════════════════════════════════════════════════════
+
+        ┌─────────────────────────────────────────────┐
+        │                   USERS                     │
+        │  (name, email, role: USER/ADMIN/TEAM)      │
+        └─────────────────────────────────────────────┘
+         │                                       │
+         ├─────────────────────────────────────────┤
+         │                                         │
+         ▼                                         ▼
+    ┌──────────────┐                        ┌──────────────┐
+    │ ORDERS       │  contains              │   CREWS      │
+    │ (customer)   │──────────→ PACKAGES    │ (team mgmt)  │
+    │ (assignedTeam)                        │              │
+    └──────────────┘                        └──────────────┘
+         │                                         │
+         ▼                                         ▼
+    ┌──────────────┐                        ┌──────────────┐
+    │ PAYMENTS     │                        │  VEHICLES    │
+    │ (razorpay)   │                        │  (fleet)     │
+    └──────────────┘                        └──────────────┘
+
+    ┌──────────────────────┐      ┌──────────────────────┐
+    │  CONTACTMESSAGES     │      │   NOTIFICATIONS      │
+    │  (user optional)     │      │   (recipient opt.)   │
+    └──────────────────────┘      └──────────────────────┘
+
+
+════════════════════════════════════════════════════════════════════════════════
+  COMMON DATABASE QUERIES
+════════════════════════════════════════════════════════════════════════════════
+
+Get all orders for a user:
+  db.orders.find({ customer: ObjectId("user_id") })
+
+Get pending payments:
+  db.orders.find({ "payment.status": "PENDING" })
+
+Get team's crew members:
+  db.crews.find({ team: ObjectId("team_user_id") })
+
+Get unread notifications:
+  db.notifications.find({ recipient: ObjectId("user_id"), read: false })
+
+Get new contact messages:
+  db.contactmessages.find({ status: "NEW" })
+
+Get available vehicles:
+  db.vehicles.find({ isAvailable: true })
+
+Get popular packages:
+  db.packages.find({ isPopular: true })
+
+Count completed orders:
+  db.orders.countDocuments({ status: "COMPLETED" })
+
+Get high-rated crew members:
+  db.crews.find({ rating: { $gte: 4.5 }, isActive: true })
+
+
+════════════════════════════════════════════════════════════════════════════════
+  BACKUP & MAINTENANCE
+════════════════════════════════════════════════════════════════════════════════
+
+Backup Database:
+  mongodump --uri="mongodb+srv://<username>:<password>@<cluster>.mongodb.net/move-it"
+
+Restore Database:
+  mongorestore --uri="mongodb+srv://<username>:<password>@<cluster>.mongodb.net/move-it" ./dump
+
+Check Database Size:
+  db.stats()
+
+Check Collection Stats:
+  db.collection_name.stats()
+
+List All Collections:
+  db.listCollections()
+
+Drop Collection:
+  db.collection_name.drop()
+
+
+════════════════════════════════════════════════════════════════════════════════
+  NOTES
+════════════════════════════════════════════════════════════════════════════════
+
+• All DateTime fields use ISO 8601 format
+• ObjectIds are automatically generated by MongoDB
+• Relationships are maintained through references (foreign keys)
+• Indexes improve query performance for frequently searched fields
+• Role-based access control: USER (customer), ADMIN (manager), TEAM (service provider)
+• Payment statuses: PENDING → SUCCESS/FAILED
+• Order statuses follow a workflow from PLACED → COMPLETED/CANCELLED
+• Notifications can target specific user roles or individuals
+• Contact messages support both authenticated users and guests
+
+════════════════════════════════════════════════════════════════════════════════
